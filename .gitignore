@@ -5,7 +5,7 @@ npm-debug.log
 # Dependencias globales de Node.js
 package-lock.json
 
-*.js 
+*.js
 # Directorio de compilación
 dist/
 
