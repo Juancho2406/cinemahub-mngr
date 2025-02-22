@@ -9,7 +9,8 @@
     "dev": "nodemon src/app.ts",
     "start:prod": "NODE_ENV=production node dist/app.js",
     "build": "tsc",
-    "watch": "tsc --watch"
+    "watch": "tsc --watch",
+    "deploy": "zip -r cinemahub-mngr.zip dist/ app.js"
   },
   "keywords": [],
   "author": "",
