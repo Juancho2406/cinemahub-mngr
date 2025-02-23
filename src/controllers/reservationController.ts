@@ -17,33 +17,20 @@ const isEmailVerified = async (email) => {
       : "Not Verified";
     return verificationStatus === "Success";
   } catch (error) {
-    try {
-      await ses
-        .sendCustomVerificationEmail({
-          EmailAddress: email,
-          TemplateName: ""
-        })
-        .promise();
-    } catch (error) {
-      console.log("Error al enviar verificacion de correo");
-    }
-    console.error("Error al verificar el correo electrónico:", error);
-    throw new Error("Error al verificar el correo electrónico");
+    return false;
   }
 };
 
 const createReservation = async (req, res) => {
   const { movieId, roomId, seats, email, sendConfirmationEmail } = req.body; // Desestructuramos el flag `sendConfirmationEmail`
-  let sendConfirmationEmailFlag = sendConfirmationEmail
+  let sendConfirmationEmailFlag = sendConfirmationEmail;
   // Validación de entradas
   if (!movieId || !roomId || !seats || !email) {
-    return res
-      .status(400)
-      .json({
-        error: "Faltan parámetros obligatorios: movieId, roomId, seats, email"
-      });
+    return res.status(400).json({
+      error: "Faltan parámetros obligatorios: movieId, roomId, seats, email"
+    });
   }
-
+  console.log("Body de la request",req.body);
   // Verificar si el correo electrónico está verificado
   const isVerified = await isEmailVerified(email);
 
@@ -66,7 +53,8 @@ const createReservation = async (req, res) => {
       createdAt: new Date().toISOString() // Timestamp de creación
     }
   };
-
+  console.log("Params put table",params)
+  console.log('Confirmation Flag',sendConfirmationEmailFlag)
   try {
     await dynamoDb.put(params).promise();
 
