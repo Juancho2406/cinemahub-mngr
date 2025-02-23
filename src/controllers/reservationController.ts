@@ -32,7 +32,7 @@ try {
 };
 
 const createReservation = async (req, res) => {
-  const { movieId, roomId, seats, email } = req.body;
+  const { movieId, roomId, seats, email, sendConfirmationEmail } = req.body; // Desestructuramos el flag `sendConfirmationEmail`
 
   // Validación de entradas
   if (!movieId || !roomId || !seats || !email) {
@@ -82,25 +82,26 @@ const createReservation = async (req, res) => {
   try {
     await dynamoDb.put(params).promise();
 
-    // Enviar correo de confirmación de reserva
-    const emailParams = {
-      Source: 'no-reply@yourdomain.com', // Reemplaza con tu dirección de correo verificada en SES
-      Destination: {
-        ToAddresses: [email], // Dirección de correo electrónico proporcionada
-      },
-      Message: {
-        Subject: {
-          Data: 'Confirmación de reserva',
+    if (sendConfirmationEmail) {
+      const emailParams = {
+        Source: 'juansaavedra2406@gmail.com',
+        Destination: {
+          ToAddresses: [email],
         },
-        Body: {
-          Text: {
-            Data: `¡Hola!\n\nTu reserva para la película con ID ${movieId} en la sala ${roomId} ha sido confirmada.\n\nNúmero de asientos reservados: ${seats}\n\nGracias por elegirnos.`,
+        Message: {
+          Subject: {
+            Data: 'Confirmación de reserva',
+          },
+          Body: {
+            Text: {
+              Data: `¡Hola!\n\nTu reserva para la película con ID ${movieId} en la sala ${roomId} ha sido confirmada.\n\nNúmero de asientos reservados: ${seats}\n\nGracias por elegirnos.`,
+            },
           },
         },
-      },
-    };
+      };
 
-    await ses.sendEmail(emailParams).promise(); // Enviar el correo electrónico de confirmación
+      await ses.sendEmail(emailParams).promise(); // Enviar el correo electrónico de confirmación
+    }
 
     // Respuesta exitosa con la reserva creada
     return res.status(201).json({

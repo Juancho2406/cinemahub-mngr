@@ -28,10 +28,6 @@ app.use(cors({
 // Middleware para parsear JSON
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.json({ message: "¡Bienvenido a la API de CinemaHub!" });
-});
-
 // Rutas de la API
 app.post("/movies", movieController.createMovie);
 app.get("/movies", movieController.getMovies);
