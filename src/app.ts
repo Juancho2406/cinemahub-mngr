@@ -3,6 +3,7 @@ const movieController = require("./controllers/movieController");
 const roomController = require("./controllers/roomController");
 const reservationController = require("./controllers/reservationController");
 const dotenv = require('dotenv');  
+const cors = require('cors')
 // const swaggerUi = require('swagger-ui-express');
 // const YAML = require('yamljs');
 
@@ -15,7 +16,12 @@ dotenv.config();
 // Crear la aplicación Express
 const app = express();
 const port = process.env.PORT || 3000;
+app.use(cors()); // Permite solicitudes de cualquier dominio
 
+// Si deseas permitir solo solicitudes de un dominio específico:
+app.use(cors({
+  origin: '*', // Reemplaza con tu dominio
+}));
 // Usar Swagger para documentación
 // app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
