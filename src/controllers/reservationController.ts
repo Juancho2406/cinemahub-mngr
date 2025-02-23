@@ -122,6 +122,7 @@ module.exports = { createReservation };
 
 // Obtener todas las reservas
 const getReservations = async (req, res) => {
+  console.log("Request de reservas",req)
   const params = {
     TableName: 'ReservationsTable',
   };
