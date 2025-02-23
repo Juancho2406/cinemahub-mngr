@@ -27,7 +27,8 @@
     "swagger-ui-express": "^5.0.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3",
-    "yamljs": "^0.3.0"
+    "yamljs": "^0.3.0",
+    "aws-sdk": "^2.1692.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
