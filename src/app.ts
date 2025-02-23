@@ -11,28 +11,28 @@ const YAML = require('yamljs');
 dotenv.config();
 
 // Cargar el archivo de documentación Swagger
-const swaggerDocument = YAML.load('./api/openapi-spec.yaml');
+// const swaggerDocument = YAML.load('./api/openapi-spec.yaml');
 
 // Crear la aplicación Express
 const app = express();
 const port = process.env.PORT || 3000;
 
 // Usar Swagger para documentación
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Middleware para parsear JSON
 app.use(express.json());
 
 // Conectar a la base de datos de MongoDB
-mongoose
-  .connect("mongodb://localhost/cinema", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("Conectado a la base de datos"))
-  .catch((err) =>
-    console.error("Error al conectar con la base de datos", err)
-  );
+// mongoose
+//   .connect("mongodb://localhost/cinema", {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+//   })
+//   .then(() => console.log("Conectado a la base de datos"))
+//   .catch((err) =>
+//     console.error("Error al conectar con la base de datos", err)
+//   );
 
 // Rutas de la API
 app.post("/movies", movieController.createMovie);
