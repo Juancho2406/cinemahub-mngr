@@ -24,7 +24,7 @@ try {
     }
   ).promise();
 } catch (error) {
-  console.error("Error al enviar verificacion de correo")
+  console.log("Error al enviar verificacion de correo")
 }
     console.error('Error al verificar el correo electrónico:', error);
     throw new Error('Error al verificar el correo electrónico');
