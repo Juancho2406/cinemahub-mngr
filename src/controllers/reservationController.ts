@@ -2,13 +2,52 @@ import AWS from 'aws-sdk'
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 const ses = new AWS.SES({ region: 'us-east-1' }); // Usamos la región en la que SES está habilitado
 
-// Crear una nueva reserva
+
+// Función para verificar si el correo electrónico está verificado en SES
+const isEmailVerified = async (email) => {
+  const params = {
+    Identities: [email],
+  };
+
+  try {
+    const result = await ses.getIdentityVerificationAttributes(params).promise();
+    const verificationStatus = result.VerificationAttributes[email] ? result.VerificationAttributes[email].VerificationStatus : 'Not Verified';
+    return verificationStatus === 'Success';
+  } catch (error) {
+    console.error('Error al verificar el correo electrónico:', error);
+    throw new Error('Error al verificar el correo electrónico');
+  }
+};
+
 const createReservation = async (req, res) => {
   const { movieId, roomId, seats, email } = req.body;
 
   // Validación de entradas
   if (!movieId || !roomId || !seats || !email) {
     return res.status(400).json({ error: 'Faltan parámetros obligatorios: movieId, roomId, seats, email' });
+  }
+
+  // Verificar si el correo electrónico está verificado
+  const isVerified = await isEmailVerified(email);
+
+  if (!isVerified) {
+    // Si el correo no está verificado, enviar un correo de verificación
+    const verificationParams = {
+      EmailAddress: email,
+    };
+
+    try {
+      // Enviar correo de verificación
+      await ses.verifyEmailIdentity(verificationParams).promise();
+
+      return res.status(400).json({
+        error: 'El correo electrónico no está verificado. Por favor, verifica tu correo antes de continuar.',
+        message: `Un correo de verificación ha sido enviado a ${email}. Haz clic en el enlace de verificación para completar el proceso.`,
+      });
+    } catch (error) {
+      console.error('Error al enviar la solicitud de verificación:', error);
+      return res.status(500).json({ error: 'Error al intentar enviar el correo de verificación.' });
+    }
   }
 
   // Generar un ID único para la reserva
@@ -33,7 +72,7 @@ const createReservation = async (req, res) => {
 
     // Enviar correo de confirmación de reserva
     const emailParams = {
-      Source: 'juansaavedra2406@gmail.com', // Reemplaza con tu dirección de correo verificada en SES
+      Source: 'no-reply@yourdomain.com', // Reemplaza con tu dirección de correo verificada en SES
       Destination: {
         ToAddresses: [email], // Dirección de correo electrónico proporcionada
       },
@@ -49,7 +88,7 @@ const createReservation = async (req, res) => {
       },
     };
 
-    await ses.sendEmail(emailParams).promise(); // Enviar el correo electrónico
+    await ses.sendEmail(emailParams).promise(); // Enviar el correo electrónico de confirmación
 
     // Respuesta exitosa con la reserva creada
     return res.status(201).json({
@@ -65,6 +104,9 @@ const createReservation = async (req, res) => {
     return res.status(500).json({ error: 'Error al crear la reserva o enviar el correo' });
   }
 };
+
+module.exports = { createReservation };
+
 
 // Obtener todas las reservas
 const getReservations = async (req, res) => {
