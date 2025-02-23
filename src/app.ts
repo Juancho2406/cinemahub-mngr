@@ -1,5 +1,4 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const movieController = require("./controllers/movieController");
 const roomController = require("./controllers/roomController");
 const reservationController = require("./controllers/reservationController");
@@ -23,16 +22,6 @@ const port = process.env.PORT || 3000;
 // Middleware para parsear JSON
 app.use(express.json());
 
-// Conectar a la base de datos de MongoDB
-// mongoose
-//   .connect("mongodb://localhost/cinema", {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true,
-//   })
-//   .then(() => console.log("Conectado a la base de datos"))
-//   .catch((err) =>
-//     console.error("Error al conectar con la base de datos", err)
-//   );
 app.get("/", (req, res) => {
   res.json({ message: "¡Bienvenido a la API de CinemaHub!" });
 });
@@ -53,5 +42,6 @@ const server = serverless.createServer(app);
 
 // Handler para Lambda
 exports.handler = (event, context) => {
+  console.log("Request received: ", event);  // 
   return serverless.proxy(server, event, context);
 };
