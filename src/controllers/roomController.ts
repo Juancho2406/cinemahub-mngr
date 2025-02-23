@@ -1,21 +1,45 @@
-const Room = require('../models/room');
+import AWS from 'aws-sdk'
 
-const createRoom = async (req:any, res:any) => {
+// Configurar DynamoDB
+AWS.config.update({
+  region: 'us-east-1', // Cambia la región si es necesario
+});
+const dynamoDb = new AWS.DynamoDB.DocumentClient();
+
+// Crear sala
+const createRoom = async (req, res) => {
   const { name, capacity } = req.body;
+  const id = `${Date.now()}`;  // Generar un ID único para la sala
+
+  const params = {
+    TableName: 'RoomsTable',
+    Item: {
+      id: id,
+      name: name,
+      capacity: capacity,
+    },
+  };
+
   try {
-    const newRoom = new Room({ name, capacity });
-    await newRoom.save();
-    res.status(201).json(newRoom);
+    await dynamoDb.put(params).promise();  // Insertar la sala en DynamoDB
+    res.status(201).json(params.Item);  // Retornar la sala creada
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: 'Error al crear la sala' });
   }
 };
 
-const getRooms = async (req:any, res:any) => {
+// Obtener todas las salas
+const getRooms = async (req, res) => {
+  const params = {
+    TableName: 'RoomsTable',
+  };
+
   try {
-    const rooms = await Room.find();
-    res.status(200).json(rooms);
+    const result = await dynamoDb.scan(params).promise();  // Obtener todas las salas
+    res.status(200).json(result.Items);  // Retornar las salas obtenidas
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: 'Error al obtener las salas' });
   }
 };
