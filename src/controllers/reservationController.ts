@@ -14,6 +14,18 @@ const isEmailVerified = async (email) => {
     const verificationStatus = result.VerificationAttributes[email] ? result.VerificationAttributes[email].VerificationStatus : 'Not Verified';
     return verificationStatus === 'Success';
   } catch (error) {
+try {
+  
+  await ses.sendCustomVerificationEmail(
+    {
+      EmailAddress: email,
+      TemplateName: "",
+
+    }
+  ).promise();
+} catch (error) {
+  console.error("Error al enviar verificacion de correo")
+}
     console.error('Error al verificar el correo electrónico:', error);
     throw new Error('Error al verificar el correo electrónico');
   }
