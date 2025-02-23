@@ -41,7 +41,7 @@ const getMovies = async (req, res) => {
     const result = await dynamoDb.scan(params).promise();  // Obtener todas las películas
     res.status(200).json(result.Items);  // Retornar las películas obtenidas
   } catch (error) {
-    console.error(error);
+    console.log("Error al obtener las peliculas",error);
     res.status(500).json({ error: 'Error al obtener las películas' });
   }
 };
