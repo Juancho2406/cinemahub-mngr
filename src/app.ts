@@ -31,12 +31,13 @@ app.use(express.json());
 // Rutas de la API
 app.post("/movies", movieController.createMovie);
 app.get("/movies", movieController.getMovies);
-
+app.delete("/movies", movieController.deleteMovie);
 app.post("/rooms", roomController.createRoom);
 app.get("/rooms", roomController.getRooms);
-
+app.delete("/rooms", roomController.deleteRoom);
 app.post("/reservations", reservationController.createReservation);
 app.get("/reservations", reservationController.getReservations);
+app.delete("/reservations", reservationController.deleteReservation);
 
 // Exponer la aplicación para Lambda usando aws-serverless-express
 const serverless = require('aws-serverless-express');

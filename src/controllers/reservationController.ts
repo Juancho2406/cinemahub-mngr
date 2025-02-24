@@ -113,5 +113,38 @@ const getReservations = async (req, res) => {
     res.status(500).json({ error: "Error al obtener las reservas" });
   }
 };
+// Función para eliminar una reserva
+const deleteReservation = async (req, res) => {
+  const { id } = req.params; // Obtener el ID de la reserva desde los parámetros de la URL
 
-module.exports = { createReservation, getReservations };
+  if (!id) {
+    return res.status(400).json({
+      error: "Faltan parámetros obligatorios: id"
+    });
+  }
+
+  // Configuración de parámetros para DynamoDB
+  const params = {
+    TableName: "ReservationsTable",
+    Key: {
+      id: id // Usamos el ID para eliminar la reserva
+    }
+  };
+
+  try {
+    // Intentamos eliminar el ítem con el ID proporcionado
+    await dynamoDb.delete(params).promise();
+
+    // Respuesta exitosa si la eliminación fue correcta
+    return res.status(200).json({
+      message: `Reserva con ID ${id} eliminada correctamente`
+    });
+  } catch (error) {
+    console.error("Error al eliminar la reserva:", error);
+    return res.status(500).json({
+      error: "Error al eliminar la reserva"
+    });
+  }
+};
+
+module.exports = { createReservation, getReservations, deleteReservation };
