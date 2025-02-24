@@ -3,11 +3,10 @@ import AWS from "aws-sdk";
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
 class RoomService {
-  // Crear sala
+  
   static async createRoom(req, res) {
     const { name, capacity, seats, reservedSeats } = req.body;
-    const id = `${Date.now()}`; // Generar un ID único para la sala
-
+    const id = `${Date.now()}`;
     const params = {
       TableName: "RoomsTable",
       Item: {
@@ -20,23 +19,23 @@ class RoomService {
     };
 
     try {
-      await dynamoDb.put(params).promise(); // Insertar la sala en DynamoDB
-      res.status(201).json(params.Item); // Retornar la sala creada
+      await dynamoDb.put(params).promise();
+      res.status(201).json(params.Item); 
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Error al crear la sala" });
     }
   }
 
-  // Obtener todas las salas
+  
   static async getRooms(req, res) {
     const params = {
       TableName: "RoomsTable"
     };
 
     try {
-      const result = await dynamoDb.scan(params).promise(); // Obtener todas las salas
-      res.status(200).json(result.Items); // Retornar las salas obtenidas
+      const result = await dynamoDb.scan(params).promise(); 
+      res.status(200).json(result.Items);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Error al obtener las salas" });
@@ -71,8 +70,6 @@ class RoomService {
       });
     }
   }
-
-  // Emulamos un update usando delete y luego post
   static async updateRoom(req, res) {
     const { id, name, capacity, seats, reservedSeats } = req.body;
 
@@ -82,7 +79,6 @@ class RoomService {
       });
     }
 
-    // Primero, eliminamos la sala existente con el mismo id
     const deleteParams = {
       TableName: "RoomsTable",
       Key: {
@@ -91,14 +87,12 @@ class RoomService {
     };
 
     try {
-      // Eliminamos la sala anterior
       await dynamoDb.delete(deleteParams).promise();
 
-      // Ahora, creamos una nueva sala con los datos actualizados
       const params = {
         TableName: "RoomsTable",
         Item: {
-          id: id, // Mantenemos el mismo id
+          id: id, 
           name,
           capacity,
           seats,
@@ -106,13 +100,11 @@ class RoomService {
         }
       };
 
-      // Insertamos la nueva sala
       await dynamoDb.put(params).promise();
 
-      // Respondemos con el mensaje de éxito
       res.status(200).json({
         message: "Sala actualizada correctamente",
-        updatedRoom: params.Item // Los valores actualizados
+        updatedRoom: params.Item
       });
     } catch (error) {
       console.error("Error al actualizar la sala:", error);

@@ -5,7 +5,6 @@ const ses = new AWS.SES({ region: "us-east-1" }); // Usamos la región en la que
 
 class ReservationService {
 
-  // Crear reserva
   static async createReservation(req, res) {
     const { movieId, roomId, reservedSeats, email, sendConfirmationEmail,movieName,roomName } = req.body;
 
@@ -14,7 +13,7 @@ class ReservationService {
         error: "Faltan parámetros obligatorios: movieId, roomId, reservedSeats, email"
       });
     }
-    // Generar un ID único para la reserva
+
     const id = `${Date.now()}`;
 
     const params = {
@@ -26,7 +25,7 @@ class ReservationService {
         roomName: roomName,
         reservedSeats: reservedSeats,
         email: email,
-        createdAt: new Date().toISOString() // Timestamp de creación
+        createdAt: new Date().toISOString() 
       }
     };
 
@@ -54,7 +53,7 @@ class ReservationService {
         await ses.sendEmail(emailParams).promise();
       }
 
-      return res.status(201).json(params.Item); // Retorna la reserva creada
+      return res.status(201).json(params.Item); 
     } catch (error) {
       console.error("Error al crear la reserva o enviar el correo:", error);
       return res.status(500).json({
@@ -63,7 +62,7 @@ class ReservationService {
     }
   }
 
-  // Obtener todas las reservas
+  
   static async getReservations(req, res) {
     const params = {
       TableName: "ReservationsTable"
@@ -78,7 +77,6 @@ class ReservationService {
     }
   }
 
-  // Eliminar una reserva
   static async deleteReservation(req, res) {
     const { id } = req.params;
 
@@ -108,12 +106,11 @@ class ReservationService {
     }
   }
 
-  // Actualizar una reserva
   static async updateReservation(req, res) {
     console.log("Llego la solicitud",req.body)
     const { id, movieId, roomId, reservedSeats, email, sendConfirmationEmail } = req.body;
 
-    // Validación de entradas
+  
     if (!id || !movieId || !roomId || !reservedSeats || !email) {
       return res.status(400).json({
         error: "Faltan parámetros obligatorios: id, movieId, roomId, reservedSeats, email"
