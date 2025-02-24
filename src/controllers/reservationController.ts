@@ -7,7 +7,7 @@ class ReservationService {
 
   // Crear reserva
   static async createReservation(req, res) {
-    const { movieId, roomId, seats, email, sendConfirmationEmail } = req.body;
+    const { movieId, roomId, seats, email, sendConfirmationEmail,movieName,roomName } = req.body;
 
     if (!movieId || !roomId || !seats || !email) {
       return res.status(400).json({
@@ -21,8 +21,8 @@ class ReservationService {
       TableName: "ReservationsTable",
       Item: {
         id: id,
-        movieId: movieId,
-        roomId: roomId,
+        movieName: movieName,
+        roomName: roomName,
         seats: seats,
         email: email,
         createdAt: new Date().toISOString() // Timestamp de creación
