@@ -45,39 +45,21 @@ class RoomService {
 
   // Eliminar una sala por nombre
   static async deleteRoom(req, res) {
-    const { name } = req.params; // Obtener el nombre de la sala desde los parámetros de la URL
+    const { id } = req.params; // Obtener el nombre de la sala desde los parámetros de la URL
 
-    if (!name) {
+    if (!id) {
       return res.status(400).json({
-        error: "Falta el parámetro obligatorio: name"
+        error: "Falta el parámetro obligatorio: id"
       });
     }
 
-    // Buscar la sala por nombre primero para obtener su ID
-    const searchParams = {
-      TableName: "RoomsTable",
-      FilterExpression: "name = :name",
-      ExpressionAttributeValues: {
-        ":name": name
-      }
-    };
-
     try {
-      const result = await dynamoDb.scan(searchParams).promise(); // Realizar el escaneo para encontrar la sala con ese nombre
-
-      if (result.Items.length === 0) {
-        return res
-          .status(404)
-          .json({ error: "Sala no encontrada con ese nombre" });
-      }
-
-      const roomToDelete = result.Items[0]; // Tomamos la primera coincidencia, asumimos que el nombre es único
-
+     
       // Ahora eliminamos la sala por el ID
       const deleteParams = {
         TableName: "RoomsTable",
         Key: {
-          id: roomToDelete.id // Usamos el ID de la sala encontrada
+          id: id // Usamos el ID de la sala encontrada
         }
       };
 
