@@ -1,0 +1,304 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Sistema de Gestión de Reservas para un Cine",
+      "description": "API para gestionar películas, salas, reservas y enviar notificaciones por correo electrónico.",
+      "version": "1.0.0"
+    },
+    "servers": [
+      {
+        "url": "http://localhost:3000",
+        "description": "Servidor local"
+      }
+    ],
+    "tags": [
+      {
+        "name": "Movies",
+        "description": "Operaciones relacionadas con películas"
+      },
+      {
+        "name": "Rooms",
+        "description": "Operaciones relacionadas con salas"
+      },
+      {
+        "name": "Reservations",
+        "description": "Operaciones relacionadas con reservas"
+      }
+    ],
+    "paths": {
+      "/movies": {
+        "post": {
+          "tags": ["Movies"],
+          "summary": "Crear una nueva película",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "title": { "type": "string" },
+                    "genre": { "type": "string" },
+                    "duration": { "type": "number" },
+                    "rating": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Película creada exitosamente"
+            }
+          }
+        },
+        "get": {
+          "tags": ["Movies"],
+          "summary": "Obtener todas las películas",
+          "responses": {
+            "200": {
+              "description": "Lista de películas"
+            }
+          }
+        }
+      },
+      "/movies/{id}": {
+        "put": {
+          "tags": ["Movies"],
+          "summary": "Actualizar una película existente",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "title": { "type": "string" },
+                    "genre": { "type": "string" },
+                    "duration": { "type": "number" },
+                    "rating": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Película actualizada exitosamente"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["Movies"],
+          "summary": "Eliminar una película",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Película eliminada exitosamente"
+            }
+          }
+        }
+      },
+      "/rooms": {
+        "post": {
+          "tags": ["Rooms"],
+          "summary": "Crear una nueva sala",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": { "type": "string" },
+                    "capacity": { "type": "number" }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Sala creada exitosamente"
+            }
+          }
+        },
+        "get": {
+          "tags": ["Rooms"],
+          "summary": "Obtener todas las salas",
+          "responses": {
+            "200": {
+              "description": "Lista de salas"
+            }
+          }
+        }
+      },
+      "/rooms/{id}": {
+        "put": {
+          "tags": ["Rooms"],
+          "summary": "Actualizar una sala existente",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": { "type": "string" },
+                    "capacity": { "type": "number" }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Sala actualizada exitosamente"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["Rooms"],
+          "summary": "Eliminar una sala",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Sala eliminada exitosamente"
+            }
+          }
+        }
+      },
+      "/reservations": {
+        "post": {
+          "tags": ["Reservations"],
+          "summary": "Crear una nueva reserva",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "movieId": { "type": "string" },
+                    "roomId": { "type": "string" },
+                    "schedule": { "type": "string" },
+                    "reservedSeats": { "type": "array", "items": { "type": "string" } },
+                    "email": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Reserva creada exitosamente"
+            }
+          }
+        },
+        "get": {
+          "tags": ["Reservations"],
+          "summary": "Obtener todas las reservas",
+          "responses": {
+            "200": {
+              "description": "Lista de reservas"
+            }
+          }
+        }
+      },
+      "/reservations/{id}": {
+        "put": {
+          "tags": ["Reservations"],
+          "summary": "Actualizar una reserva existente",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "movieId": { "type": "string" },
+                    "roomId": { "type": "string" },
+                    "schedule": { "type": "string" },
+                    "reservedSeats": { "type": "array", "items": { "type": "string" } },
+                    "email": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Reserva actualizada exitosamente"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["Reservations"],
+          "summary": "Eliminar una reserva",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Reserva eliminada exitosamente"
+            }
+          }
+        }
+      }
+    }
+  }

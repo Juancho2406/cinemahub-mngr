@@ -4,7 +4,7 @@ const roomController = require("./controllers/roomController");
 const reservationController = require("./controllers/reservationController");
 const dotenv = require('dotenv');  
 const cors = require('cors');
-
+const path = require('path'); 
 dotenv.config();
 
 
@@ -18,6 +18,12 @@ app.use(cors({
 }));
 
 app.use(express.json());
+
+// Endpoint para exponer la especificación OAS
+app.get('/api-docs', (req, res) => {
+  const oasPath = path.join(__dirname, '../oas.json'); 
+  res.sendFile(oasPath);
+});
 
 app.post("/movies", movieController.createMovie);
 app.get("/movies", movieController.getMovies);
