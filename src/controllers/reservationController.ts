@@ -7,11 +7,11 @@ class ReservationService {
 
   // Crear reserva
   static async createReservation(req, res) {
-    const { movieId, roomId, seats, email, sendConfirmationEmail,movieName,roomName } = req.body;
+    const { movieId, roomId, reservedSeats, email, sendConfirmationEmail,movieName,roomName } = req.body;
 
-    if (!movieId || !roomId || !seats || !email) {
+    if (!movieId || !roomId || !reservedSeats || !email) {
       return res.status(400).json({
-        error: "Faltan parámetros obligatorios: movieId, roomId, seats, email"
+        error: "Faltan parámetros obligatorios: movieId, roomId, reservedSeats, email"
       });
     }
     // Generar un ID único para la reserva
@@ -24,7 +24,7 @@ class ReservationService {
         cedula: 1005344097,
         movieName: movieName,
         roomName: roomName,
-        seats: seats,
+        reservedSeats: reservedSeats,
         email: email,
         createdAt: new Date().toISOString() // Timestamp de creación
       }
@@ -45,7 +45,7 @@ class ReservationService {
             },
             Body: {
               Text: {
-                Data: `¡Hola!\n\nTu reserva para la película con ID ${movieId} en la sala ${roomId} ha sido confirmada.\n\nNúmero de asientos reservados: ${seats}\n\nGracias por elegirnos.`
+                Data: `¡Hola!\n\nTu reserva para la película con ID ${movieId} "${movieName}" en la sala ${roomId} ha sido confirmada.\n\nNúmero de asientos reservados: ${reservedSeats}\n\nGracias por elegirnos.`
               }
             }
           }
@@ -110,12 +110,13 @@ class ReservationService {
 
   // Actualizar una reserva
   static async updateReservation(req, res) {
-    const { id, movieId, roomId, seats, email, sendConfirmationEmail } = req.body;
+    console.log("Llego la solicitud",req.body)
+    const { id, movieId, roomId, reservedSeats, email, sendConfirmationEmail } = req.body;
 
     // Validación de entradas
-    if (!id || !movieId || !roomId || !seats || !email) {
+    if (!id || !movieId || !roomId || !reservedSeats || !email) {
       return res.status(400).json({
-        error: "Faltan parámetros obligatorios: id, movieId, roomId, seats, email"
+        error: "Faltan parámetros obligatorios: id, movieId, roomId, reservedSeats, email"
       });
     }
     const params = {
@@ -123,11 +124,11 @@ class ReservationService {
       Key: {
         id: id
       },
-      UpdateExpression: "set movieId = :movieId, roomId = :roomId, seats = :seats, email = :email, updatedAt = :updatedAt",
+      UpdateExpression: "set movieId = :movieId, roomId = :roomId, reservedSeats = :seats, email = :email, updatedAt = :updatedAt",
       ExpressionAttributeValues: {
         ":movieId": movieId,
         ":roomId": roomId,
-        ":seats": seats,
+        ":seats": reservedSeats,
         ":email": email,
         ":updatedAt": new Date().toISOString()
       },
@@ -149,7 +150,7 @@ class ReservationService {
             },
             Body: {
               Text: {
-                Data: `¡Hola!\n\nTu reserva para la película con ID ${movieId} en la sala ${roomId} ha sido actualizada.\n\nNúmero de asientos reservados: ${seats}\n\nGracias por elegirnos.`
+                Data: `¡Hola!\n\nTu reserva para la película con ID ${movieId} en la sala ${roomId} ha sido actualizada.\n\nNúmero de asientos reservados: ${reservedSeats}\n\nGracias por elegirnos.`
               }
             }
           }
