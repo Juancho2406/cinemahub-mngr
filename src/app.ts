@@ -23,7 +23,7 @@ app.get('/api-docs', (req, res) => {
   const oasPath = path.join(__dirname, './oas.json'); 
   res.sendFile(oasPath);
 });
-app.get('/docs', swaggerUi.serve, swaggerUi.setup(oasSpec));
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(oasSpec));
 
 app.post("/movies", movieController.createMovie);
 app.get("/movies", movieController.getMovies);
