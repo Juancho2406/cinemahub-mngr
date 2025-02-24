@@ -6,8 +6,8 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const path = require('path'); 
 dotenv.config();
-
-
+const oasSpec = require('./oas.json');
+const swaggerUi = require('swagger-ui-express');
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -24,6 +24,7 @@ app.get('/api-docs', (req, res) => {
   const oasPath = path.join(__dirname, './oas.json'); 
   res.sendFile(oasPath);
 });
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(oasSpec));
 
 app.post("/movies", movieController.createMovie);
 app.get("/movies", movieController.getMovies);
