@@ -43,9 +43,8 @@ class RoomService {
     }
   }
 
-  // Eliminar una sala por nombre
   static async deleteRoom(req, res) {
-    const { id } = req.params; // Obtener el nombre de la sala desde los parámetros de la URL
+    const { id } = req.params; 
 
     if (!id) {
       return res.status(400).json({
@@ -54,21 +53,16 @@ class RoomService {
     }
 
     try {
-     
-      // Ahora eliminamos la sala por el ID
       const deleteParams = {
         TableName: "RoomsTable",
         Key: {
-          id: id // Usamos el ID de la sala encontrada
+          id: id 
         }
       };
-
-      // Eliminar la sala
       await dynamoDb.delete(deleteParams).promise();
 
-      // Respuesta exitosa
       return res.status(200).json({
-        message: `Sala con nombre "${name}" eliminada correctamente`
+        message: `Sala con id "${id}" eliminada correctamente`
       });
     } catch (error) {
       console.error("Error al eliminar la sala:", error);
@@ -78,38 +72,47 @@ class RoomService {
     }
   }
 
-  // Actualizar una sala
+  // Emulamos un update usando delete y luego post
   static async updateRoom(req, res) {
     const { id, name, capacity, seats, reservedSeats } = req.body;
 
-    // Validación de entradas
     if (!id || !name || !capacity) {
       return res.status(400).json({
         error: "Faltan parámetros obligatorios: id, name, capacity"
       });
     }
 
-    const params = {
+    // Primero, eliminamos la sala existente con el mismo id
+    const deleteParams = {
       TableName: "RoomsTable",
       Key: {
-        id: id // ID de la sala que queremos actualizar
-      },
-      UpdateExpression: "set name = :name, capacity = :capacity",
-      ExpressionAttributeValues: {
-        ":name": name,
-        ":capacity": capacity,
-        ":seats": seats,
-        ":reservedSeats": reservedSeats
-      },
-      ReturnValues: "UPDATED_NEW" // Para retornar solo los valores actualizados
+        id: id
+      }
     };
 
     try {
-      const result = await dynamoDb.update(params).promise();
+      // Eliminamos la sala anterior
+      await dynamoDb.delete(deleteParams).promise();
 
+      // Ahora, creamos una nueva sala con los datos actualizados
+      const params = {
+        TableName: "RoomsTable",
+        Item: {
+          id: id, // Mantenemos el mismo id
+          name,
+          capacity,
+          seats,
+          reservedSeats
+        }
+      };
+
+      // Insertamos la nueva sala
+      await dynamoDb.put(params).promise();
+
+      // Respondemos con el mensaje de éxito
       res.status(200).json({
         message: "Sala actualizada correctamente",
-        updatedRoom: result.Attributes // Los valores actualizados
+        updatedRoom: params.Item // Los valores actualizados
       });
     } catch (error) {
       console.error("Error al actualizar la sala:", error);

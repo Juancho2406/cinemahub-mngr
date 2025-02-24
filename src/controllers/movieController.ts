@@ -73,36 +73,46 @@ class MovieService {
   }
   static async updateMovie(req, res) {
     const { id, title, genre, duration, rating } = req.body;
-
+  
+    // Verificar que todos los parámetros obligatorios estén presentes
     if (!id || !title || !genre || !duration || !rating) {
       return res.status(400).json({
         error:
           "Faltan parámetros obligatorios: id, title, genre, duration, rating"
       });
     }
-
-    const params = {
+  
+    // Primero, eliminamos la película existente con el mismo id
+    const deleteParams = {
       TableName: "MoviesTable",
       Key: {
         id: id
-      },
-      UpdateExpression:
-        "set title = :title, genre = :genre, duration = :duration, rating = :rating",
-      ExpressionAttributeValues: {
-        ":title": title,
-        ":genre": genre,
-        "#dur": duration,
-        ":rating": rating
-      },
-      ReturnValues: "UPDATED_NEW"
+      }
     };
-
+  
     try {
-      const result = await dynamoDb.update(params).promise();
-
+      // Eliminamos la película anterior
+      await dynamoDb.delete(deleteParams).promise();
+  
+      // Ahora, creamos una nueva película con los datos actualizados
+      const params = {
+        TableName: "MoviesTable",
+        Item: {
+          id: id, // Mantenemos el mismo id
+          title: title,
+          genre: genre,
+          duration: duration,
+          rating: rating
+        }
+      };
+  
+      // Insertamos la nueva película
+      await dynamoDb.put(params).promise();
+  
+      // Respondemos con el mensaje de éxito
       res.status(200).json({
         message: "Película actualizada correctamente",
-        updatedMovie: result.Attributes
+        updatedMovie: params.Item
       });
     } catch (error) {
       console.error("Error al actualizar la película:", error);
@@ -111,6 +121,8 @@ class MovieService {
       });
     }
   }
+ 
 }
+
 
 module.exports = MovieService;
