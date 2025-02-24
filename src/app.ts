@@ -21,7 +21,7 @@ app.use(express.json());
 
 // Endpoint para exponer la especificación OAS
 app.get('/api-docs', (req, res) => {
-  const oasPath = path.join(__dirname, '../oas.json'); 
+  const oasPath = path.join(__dirname, './oas.json'); 
   res.sendFile(oasPath);
 });
 

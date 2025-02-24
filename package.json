@@ -8,7 +8,7 @@
     "start": "node dist/app.js",
     "dev": "nodemon src/app.ts",
     "start:prod": "NODE_ENV=production node dist/app.js",
-    "build": "tsc && cp -r node_modules dist/ && cp -r api dist/",
+    "build": "tsc && cp -r node_modules dist/ && cp -r src/oas.json dist/",
     "watch": "tsc --watch",
     "deploy": "zip -r cinemahub-mngr.zip dist/ app.js"
   },
