@@ -21,6 +21,7 @@ class ReservationService {
       TableName: "ReservationsTable",
       Item: {
         id: id,
+        cedula: id,
         movieName: movieName,
         roomName: roomName,
         seats: seats,
