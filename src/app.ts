@@ -47,6 +47,7 @@ app.delete("/rooms/:id", roomController.deleteRoom);
 app.post("/reservations", reservationController.createReservation);
 app.get("/reservations", reservationController.getReservations);
 app.delete("/reservations/:id", reservationController.deleteReservation); 
+app.put("/reservations/:id", reservationController.updateReservation); 
 
 const serverless = require('aws-serverless-express');
 const server = serverless.createServer(app);
