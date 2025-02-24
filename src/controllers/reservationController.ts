@@ -4,42 +4,16 @@ const dynamoDb = new AWS.DynamoDB.DocumentClient();
 const ses = new AWS.SES({ region: "us-east-1" }); // Usamos la región en la que SES está habilitado
 
 class ReservationService {
-  // Función para verificar si el correo electrónico está verificado en SES
-  static async isEmailVerified(email) {
-    const params = {
-      Identities: [email]
-    };
-
-    try {
-      const result = await ses.getIdentityVerificationAttributes(params).promise();
-      const verificationStatus = result.VerificationAttributes[email]
-        ? result.VerificationAttributes[email].VerificationStatus
-        : "Not Verified";
-      return verificationStatus === "Success";
-    } catch (error) {
-      return false;
-    }
-  }
 
   // Crear reserva
   static async createReservation(req, res) {
     const { movieId, roomId, seats, email, sendConfirmationEmail } = req.body;
-    let sendConfirmationEmailFlag = sendConfirmationEmail;
 
-    // Validación de entradas
     if (!movieId || !roomId || !seats || !email) {
       return res.status(400).json({
         error: "Faltan parámetros obligatorios: movieId, roomId, seats, email"
       });
     }
-
-    // Verificar si el correo electrónico está verificado
-    const isVerified = await this.isEmailVerified(email);
-
-    if (!isVerified) {
-      sendConfirmationEmailFlag = false;
-    }
-
     // Generar un ID único para la reserva
     const id = `${Date.now()}`;
 
@@ -58,7 +32,7 @@ class ReservationService {
     try {
       await dynamoDb.put(params).promise();
 
-      if (sendConfirmationEmailFlag) {
+      if (sendConfirmationEmail) {
         const emailParams = {
           Source: "juansaavedra2406@gmail.com",
           Destination: {
@@ -143,15 +117,6 @@ class ReservationService {
         error: "Faltan parámetros obligatorios: id, movieId, roomId, seats, email"
       });
     }
-
-    // Verificar si el correo electrónico está verificado
-    const isVerified = await this.isEmailVerified(email);
-    let sendConfirmationEmailFlag = sendConfirmationEmail;
-
-    if (!isVerified) {
-      sendConfirmationEmailFlag = false;
-    }
-
     const params = {
       TableName: "ReservationsTable",
       Key: {
@@ -171,7 +136,7 @@ class ReservationService {
     try {
       const result = await dynamoDb.update(params).promise();
 
-      if (sendConfirmationEmailFlag) {
+      if (sendConfirmationEmail) {
         const emailParams = {
           Source: "juansaavedra2406@gmail.com",
           Destination: {

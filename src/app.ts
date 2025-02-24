@@ -53,6 +53,6 @@ const server = serverless.createServer(app);
 
 
 exports.handler = (event, context) => {
-  console.log("Request received: ", event);  
+ 
   return serverless.proxy(server, event, context);
 };
