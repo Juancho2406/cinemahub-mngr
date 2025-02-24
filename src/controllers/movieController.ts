@@ -91,7 +91,7 @@ class MovieService {
       ExpressionAttributeValues: {
         ":title": title,
         ":genre": genre,
-        ":duration": duration,
+        "#dur": duration,
         ":rating": rating
       },
       ReturnValues: "UPDATED_NEW"
