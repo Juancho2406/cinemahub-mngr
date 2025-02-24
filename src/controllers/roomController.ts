@@ -45,7 +45,7 @@ class RoomService {
 
   static async deleteRoom(req, res) {
     const { id } = req.params; 
-
+    console.log("request Delete", req.params)
     if (!id) {
       return res.status(400).json({
         error: "Falta el parámetro obligatorio: id"
